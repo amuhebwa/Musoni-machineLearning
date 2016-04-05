@@ -5,9 +5,6 @@ Created on Mon Apr 04 11:07:34 2016
 @author: AGGREY
 """
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sb
 
 #Load dataset
 class LoadDataset(object):
@@ -26,8 +23,9 @@ class LoadDataset(object):
 
 #Load Loans Information
 file1_name = 'musoni/m_loan.csv'
-required_columns = [3,7,15,16,34,36] 
+required_columns = [0,3,7,15,16,34,36] 
 LoansData = LoadDataset().load_file(file1_name,required_columns)
+LoansData.rename(columns={'id':'loan_id'}, inplace=True)
 
 #Load clients information
 file2_name = 'musoni/clients.csv'
@@ -60,12 +58,13 @@ LoansOfficers_OfficesAttached_merged = loansOfficers.merge(officeLocations, on='
 finalDataset = Loans_Clients_Merged.merge(LoansOfficers_OfficesAttached_merged, on='loan_officer_id')
 
 #change the order in which the columns appear
-finalDataset = finalDataset[['client_id','gender','date_of_birth','client_activation_date',
+finalDataset = finalDataset[['client_id','gender','date_of_birth','client_activation_date','loan_id',
 'principal_amount','approved_principal','submittedon_date','approvedon_date','loan_officer_id',
 'loan_officer_name','office_id','office_Name']]
 
-finalDataset.to_csv('aggrey_muhebwa.csv', index=False)
+finalDataset.to_csv('loans_clients_officers_location_combined.csv', index=False)
 print('Finished Saving to the CSV File')
+
 
 
 
