@@ -37,14 +37,14 @@ data = df.drop(['Average Over Due Days'], axis=1)
 data = data.sample(frac=1).reset_index(drop=True)
 
 # Devide the data set into input->target
-x = data[['Number Of Loans','Average Principal']]
+x = data[['Number Of Loans','Average Principal', 'Past One Month','Past Three Months']]
 y = data[['Low/High Risk']]
 
 x = np.asarray(x)
 y = np.asarray(y)
 
-input = 2 # x
-target = 1 # y
+input = 4 #x
+target = 1 #y
 classes = 2 # The output can be one of the two classes, Not Risky(0) OR Risky(1)
 
 ds = ClassificationDataSet(input,target, nb_classes=classes)
@@ -71,23 +71,24 @@ trndata._convertToOneOfMany()
 tstdata._convertToOneOfMany()
 validata._convertToOneOfMany()
 
+
 # TIME TO CREATE A FNN NEURAL NETWORK WITH 2 INPUTS, 3 HIDDEN NEURONS AND 2 OUTPUTS 
-FNN_INPUT = 2
-FNN_HIDDEN = 15
+FNN_INPUT = 4
+FNN_HIDDEN = 70
 FNN_OUTPUT = 2
-net = buildNetwork(FNN_INPUT, FNN_HIDDEN, FNN_OUTPUT, outclass = SoftmaxLayer, bias=True)
+fnn = buildNetwork(FNN_INPUT, FNN_HIDDEN, FNN_OUTPUT, outclass = SoftmaxLayer, bias=True)
 # set up training for back propagation algorithm
 # Notice that we set up using the train data
-trainer = BackpropTrainer(net, dataset = trndata, momentum = 0.1, verbose = True, weightdecay = 0.01)
+trainer = BackpropTrainer(fnn, dataset = trndata, momentum = 0.1, verbose = True, weightdecay = 0.01, )
 
 # trnerr, valerr = trainer.trainUntilConvergence(dataset=trndata, maxEpochs = 100)
 # plt.plot(trnerr, 'b', valerr, 'r')
 
 trainer.trainOnDataset(trndata, 100)
 
-out = net.activateOnDataset(tstdata).argmax(axis=1)
+out = fnn.activateOnDataset(tstdata).argmax(axis=1)
 
-out = net.activateOnDataset(validata).argmax(axis=1)
+out = fnn.activateOnDataset(validata).argmax(axis=1)
 
 # print('------------------------------------------------')
 pe2 = percentError(out, validata['class'])
